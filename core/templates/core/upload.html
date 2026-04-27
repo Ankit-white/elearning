@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELearn — Upload File</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c28;
+            --border: rgba(255,255,255,0.07);
+            --accent: #6c63ff;
+            --accent3: #43e8b0;
+            --text: #e8e8f0;
+            --muted: #6b6b80;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 300px;
+            background: radial-gradient(ellipse, rgba(108,99,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 500px;
+            padding: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-bottom: 28px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--text); }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            margin-bottom: 32px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--accent3));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.6rem;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .card-sub {
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        .field { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--muted);
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+        }
+
+        input::placeholder { color: var(--muted); }
+
+        /* File drop zone */
+        .drop-zone {
+            background: var(--surface2);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 36px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: var(--accent);
+            background: rgba(108,99,255,0.05);
+        }
+
+        .drop-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .drop-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .drop-text {
+            font-size: 0.9rem;
+            color: var(--text);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .drop-hint {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .drop-hint span {
+            color: var(--accent3);
+        }
+
+        .file-selected {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: rgba(67,232,176,0.08);
+            border: 1px solid rgba(67,232,176,0.2);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--accent3);
+            display: none;
+            text-align: left;
+            word-break: break-all;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--accent), #8b84ff);
+            border: none;
+            border-radius: 10px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108,99,255,0.4);
+        }
+
+        .supported-formats {
+            margin-top: 20px;
+            padding: 14px 16px;
+            background: var(--surface2);
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .format-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="orb"></div>
+
+<div class="container">
+    <a href="/" class="back-link">← Back to Dashboard</a>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">⬆</div>
+            <div class="card-title">Upload File</div>
+            <div class="card-sub">Add learning materials for your students</div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="field">
+                <label>Title</label>
+                <input type="text" name="title" placeholder="e.g. Introduction to Python — Week 1" required>
+            </div>
+
+            <div class="field">
+                <label>File</label>
+                <div class="drop-zone" id="dropZone">
+                    <input type="file" name="file" id="fileInput"
+                           accept=".pdf,.mp4,.mp3,.doc,.docx,.ppt,.pptx,.png,.jpg,.jpeg,.gif,.zip,.txt"
+                           required onchange="showFile(this)">
+                    <div class="drop-icon">📁</div>
+                    <div class="drop-text">Drop your file here or click to browse</div>
+                    <div class="drop-hint">Supports <span>PDF, MP4, images, docs</span> and more</div>
+                </div>
+                <div class="file-selected" id="fileSelected">✓ Selected: <span id="fileName"></span></div>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="btn-submit">Upload File ↑</button>
+            </div>
+        </form>
+
+        <div class="supported-formats">
+            <div>Supported formats:</div>
+            <div class="format-tags">
+                <span class="tag">PDF</span>
+                <span class="tag">MP4</span>
+                <span class="tag">MP3</span>
+                <span class="tag">DOCX</span>
+                <span class="tag">PPTX</span>
+                <span class="tag">PNG/JPG</span>
+                <span class="tag">ZIP</span>
+                <span class="tag">TXT</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showFile(input) {
+    const selected = document.getElementById('fileSelected');
+    const name = document.getElementById('fileName');
+    if (input.files && input.files[0]) {
+        name.textContent = input.files[0].name;
+        selected.style.display = 'block';
+    }
+}
+
+// Drag and drop visual feedback
+const zone = document.getElementById('dropZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', () => zone.classList.remove('drag-over'));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELearn — Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c28;
+            --border: rgba(255,255,255,0.07);
+            --accent: #6c63ff;
+            --accent2: #ff6b6b;
+            --accent3: #43e8b0;
+            --text: #e8e8f0;
+            --muted: #6b6b80;
+            --radius: 14px;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Ambient background glow */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(108,99,255,0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(67,232,176,0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* NAVBAR */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.3rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #6c63ff, #43e8b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-badge {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 6px 14px 6px 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent), var(--accent3));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        .btn-primary:hover { background: #7d75ff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(108,99,255,0.3); }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--accent2);
+            border: 1px solid rgba(255,107,107,0.25);
+        }
+        .btn-danger:hover { background: rgba(255,107,107,0.1); }
+
+        /* MAIN LAYOUT */
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        /* ADMIN BANNER */
+        .admin-banner {
+            background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(67,232,176,0.1));
+            border: 1px solid rgba(108,99,255,0.3);
+            border-radius: var(--radius);
+            padding: 16px 24px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideDown 0.4s ease;
+        }
+
+        .admin-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .admin-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent3);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* SECTION HEADERS */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            letter-spacing: -0.3px;
+        }
+
+        .file-count {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        /* FILE GRID */
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .file-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.25s;
+            animation: fadeUp 0.4s ease both;
+        }
+
+        .file-card:hover {
+            border-color: rgba(108,99,255,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .file-card:nth-child(1) { animation-delay: 0.05s; }
+        .file-card:nth-child(2) { animation-delay: 0.1s; }
+        .file-card:nth-child(3) { animation-delay: 0.15s; }
+        .file-card:nth-child(4) { animation-delay: 0.2s; }
+
+        .file-preview {
+            background: var(--surface2);
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .file-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none;
+        }
+
+        .file-icon-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .file-icon.pdf { background: rgba(255,107,107,0.15); color: var(--accent2); }
+        .file-icon.video { background: rgba(108,99,255,0.15); color: var(--accent); }
+        .file-icon.other { background: rgba(67,232,176,0.15); color: var(--accent3); }
+
+        .file-type-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .file-body {
+            padding: 16px;
+        }
+
+        .file-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            border-radius: 7px;
+        }
+
+        .btn-open {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            flex: 1;
+            justify-content: center;
+        }
+        .btn-open:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* EMPTY STATE */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--muted);
+        }
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+        .empty-state p { font-size: 1rem; }
+
+        /* AI SECTION */
+        .ai-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            margin-bottom: 48px;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .ai-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent3));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .ai-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .ai-subtitle { font-size: 0.8rem; color: var(--muted); }
+
+        #answer {
+            margin-top: 16px;
+            padding: 14px 18px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: var(--accent3);
+            display: none;
+            animation: fadeUp 0.3s ease;
+        }
+
+        #answer.show { display: block; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 40px 0;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">⚡ ELearn</span>
+    <div class="nav-right">
+        <div class="user-badge">
+            <div class="user-avatar">{{ request.user.username|first }}</div>
+            {{ request.user.username }}
+        </div>
+        <a href="/logout/" class="btn btn-ghost btn-sm">Sign out</a>
+    </div>
+</nav>
+
+<main>
+    {% if is_admin %}
+    <div class="admin-banner">
+        <div class="admin-label">
+            <div class="admin-dot"></div>
+            Administrator Access
+        </div>
+        <div style="display:flex; gap:10px;">
+            <a href="/upload/" class="btn btn-primary btn-sm">＋ Upload File</a>
+            <a href="/admin/" class="btn btn-ghost btn-sm">Admin Panel</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- FILES -->
+    <div class="section-header">
+        <h2 class="section-title">Learning Materials</h2>
+        <span class="file-count">{{ files|length }} file{{ files|length|pluralize }}</span>
+    </div>
+
+    <div class="file-grid">
+        {% for file in files %}
+        <div class="file-card">
+            <div class="file-preview">
+                {% if ".mp4" in file.file.url %}
+                    <div class="file-icon-wrap">
+                        <div class="file-icon video">▶</div>
+                        <span class="file-type-label">Video</span>
+                    </div>
+                {% elif ".pdf" in file.file.url %}
+                    <div class="file-icon-wrap">
+                        <div class="file-icon pdf">📄</div>
+                        <span class="file-type-label">PDF Document</span>
+                    </div>
+                {% else %}
+                    <div class="file-icon-wrap">
+                        <div class="file-icon other">📎</div>
+                        <span class="file-type-label">File</span>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="file-body">
+                <div class="file-title">{{ file.title }}</div>
+                <div class="file-actions">
+                    {% if ".mp4" in file.file.url %}
+                        <a href="{{ file.file.url }}" target="_blank" class="btn btn-open btn-sm">▶ Play Video</a>
+                    {% elif ".pdf" in file.file.url %}
+                        <a href="{{ file.file.url }}" target="_blank" class="btn btn-open btn-sm">📄 Open PDF</a>
+                    {% else %}
+                        <a href="{{ file.file.url }}" target="_blank" class="btn btn-open btn-sm">↗ Open File</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>No files uploaded yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <hr class="divider">
+
+    <!-- AI SECTION -->
+    <div class="ai-section">
+        <div class="ai-header">
+            <div class="ai-icon">🤖</div>
+            <div>
+                <div class="ai-title">System Assistant</div>
+                <div class="ai-subtitle">Check platform status and diagnostics</div>
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="askAI()">Run Diagnostics</button>
+        <div id="answer"></div>
+    </div>
+</main>
+
+<script>
+function askAI() {
+    const el = document.getElementById('answer');
+    el.classList.remove('show');
+    el.textContent = 'Checking...';
+    el.classList.add('show');
+    fetch('/ai-help/')
+        .then(res => res.json())
+        .then(data => {
+            el.textContent = '✓ ' + data.answer;
+        })
+        .catch(() => { el.textContent = '✗ Connection error'; });
+}
+</script>
+
+</body>
+</html>
