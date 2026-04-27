@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-3o&xai*!)6n3jb09lgbt8v4s%lvw_$=!u*b9m^y*ws%#k24($a
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://your-railway-url.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://elearning-production-fdea.up.railway.app']
 
 # Application definition
 
