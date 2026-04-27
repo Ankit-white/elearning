@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
+    'cloudinary_storage',
     'core',  
 ]
 
@@ -133,3 +135,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_URL = '/login/'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+import cloudinary
+
+cloudinary.config(
+    cloud_name = os.environ.get('dcsjvpog9'),
+    api_key = os.environ.get('216588383442467'),
+    api_secret = os.environ.get('B9l68nqaZPXv_0nDaRgNzGrbWrE'),
+)
+
+# Replace default file storage
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
