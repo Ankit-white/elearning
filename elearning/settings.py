@@ -136,12 +136,15 @@ LOGIN_URL = '/login/'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
+
 import cloudinary
+import os
 
 cloudinary.config(
-    cloud_name = os.environ.get('dcsjvpog9'),
-    api_key = os.environ.get('4216588383442467'),
-    api_secret = os.environ.get('B9l68nqaZPXv_0nDaRgNzGrbWrE'),
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key = os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
 )
 
 # Replace default file storage
